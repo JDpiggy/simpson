@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Calculate Simpson's Diversity Index, Index of Diversity, and Reciprocal Index from species abundance data. Free educational tool for biology students." />
+  <title>Simpson Diversity Index Calculator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="page">
+    <header class="hero">
+      <div class="hero-badge" aria-hidden="true">Biology · Ecology</div>
+      <h1>Simpson Diversity Index Calculator</h1>
+      <p class="tagline">
+        Enter the number of individuals observed for each species. The calculator will
+        measure diversity based on both species richness and evenness.
+      </p>
+    </header>
+
+    <main id="main">
+      <!-- ========== DATA ENTRY ========== -->
+      <section class="card" aria-labelledby="entry-heading">
+        <div class="card-header">
+          <h2 id="entry-heading">Species Data</h2>
+          <p class="card-sub">Add each species and how many individuals you observed.</p>
+        </div>
+
+        <form id="diversity-form" novalidate>
+          <div class="table-wrap">
+            <table class="data-table" id="species-table">
+              <caption class="visually-hidden">
+                Species abundance data. Enter a species name and the number of individuals observed.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="col-species">Species name</th>
+                  <th scope="col" class="col-count">Number of individuals</th>
+                  <th scope="col" class="col-actions">
+                    <span class="visually-hidden">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="species-tbody">
+                <!-- Rows are rendered by JavaScript (script.js) -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="toolbar">
+            <button type="button" class="btn btn-secondary" id="btn-add">
+              <span aria-hidden="true">＋</span> Add Species
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-example">
+              <span aria-hidden="true">🌳</span> Load Example
+            </button>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary btn-large" id="btn-calculate">
+              Calculate Diversity
+            </button>
+            <button type="button" class="btn btn-outline" id="btn-clear">
+              Clear All
+            </button>
+          </div>
+
+          <p class="hint">
+            Counts must be whole numbers (0 or greater). Leave a row blank to ignore it.
+          </p>
+        </form>
+
+        <!-- Validation / status messages -->
+        <div
+          id="message"
+          class="message"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></div>
+      </section>
+
+      <!-- ========== RESULTS ========== -->
+      <section class="card results-card" id="results-section" aria-labelledby="results-heading" hidden>
+        <div class="card-header">
+          <h2 id="results-heading">Results</h2>
+          <p class="card-sub">All three common Simpson index conventions, so you never guess which one to use.</p>
+        </div>
+
+        <dl class="stats-grid">
+          <div class="stat">
+            <dt>Total species entered</dt>
+            <dd id="stat-total-species">—</dd>
+          </div>
+          <div class="stat">
+            <dt>Species with positive counts</dt>
+            <dd id="stat-positive-species">—</dd>
+          </div>
+          <div class="stat">
+            <dt>Total individuals, N</dt>
+            <dd id="stat-total-individuals">—</dd>
+          </div>
+        </dl>
+
+        <div class="index-cards">
+          <article class="index-card index-card-d">
+            <h3>Simpson’s Index <span class="formula-chip">D</span></h3>
+            <p class="index-value" id="stat-D">—</p>
+            <p class="index-note">D = Σ[n(n − 1)] / [N(N − 1)] · rounded to 4 decimal places</p>
+          </article>
+
+          <article class="index-card index-card-1d">
+            <h3>Index of Diversity <span class="formula-chip">1 − D</span></h3>
+            <p class="index-value" id="stat-1minusD">—</p>
+            <p class="index-note">Higher values mean greater diversity · rounded to 4 decimal places</p>
+          </article>
+
+          <article class="index-card index-card-recip">
+            <h3>Reciprocal Simpson’s Index <span class="formula-chip">1 / D</span></h3>
+            <p class="index-value" id="stat-1overD">—</p>
+            <p class="index-note">Effective number of equally common species · rounded to 4 decimal places when possible</p>
+          </article>
+        </div>
+
+        <div class="interpretation" id="interpretation">
+          <h3>What does this mean?</h3>
+          <p id="interpretation-text"></p>
+        </div>
+      </section>
+
+      <!-- ========== FORMULA / HELP ========== -->
+      <section class="card formula-card" aria-labelledby="formula-heading">
+        <details id="formula-details">
+          <summary id="formula-heading">
+            <span class="summary-icon" aria-hidden="true">?</span>
+            How is this calculated?
+          </summary>
+
+          <div class="formula-body">
+            <p>Each value below is computed from your species counts:</p>
+
+            <ul class="formula-list">
+              <li>
+                <strong>n</strong> = number of individuals of one species
+              </li>
+              <li>
+                <strong>N</strong> = total number of individuals across all species
+                (N = n₁ + n₂ + n₃ + …)
+              </li>
+              <li>
+                <strong>D</strong> = Σ[n(n − 1)] / [N(N − 1)]
+                <span class="formula-plain">
+                  — add up n(n − 1) for every species, then divide by N(N − 1).
+                </span>
+              </li>
+              <li>
+                <strong>Index of Diversity</strong> = 1 − D
+              </li>
+              <li>
+                <strong>Reciprocal Index</strong> = 1 / D
+              </li>
+            </ul>
+
+            <div class="callout">
+              <p>
+                <strong>Important:</strong> Different textbooks may call different forms
+                “Simpson’s Diversity Index.” Some courses use <em>D</em>, some use
+                <em>1 − D</em>, and some use <em>1 / D</em>. This calculator shows
+                <strong>all three values</strong> so you can match whichever convention
+                your assignment or lab manual uses.
+              </p>
+            </div>
+
+            <div class="example-box">
+              <h4>Worked example (the sample data)</h4>
+              <p>
+                Oak 12 · Maple 8 · Pine 4 · Birch 6 &nbsp;→&nbsp; N = 30
+              </p>
+              <pre class="work-example" aria-label="Sample calculation">Σ[n(n − 1)] = 12·11 + 8·7 + 4·3 + 6·5 = 132 + 56 + 12 + 30 = 230
+N(N − 1)    = 30 · 29 = 870
+D           = 230 / 870 ≈ 0.2644
+1 − D       ≈ 0.7356
+1 / D       ≈ 3.7826</pre>
+            </div>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Educational tool — verify which Simpson index convention your assignment or lab uses.</p>
+      <p class="footer-note">All calculations run in your browser. No data is uploaded or stored.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
